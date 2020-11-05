@@ -1,0 +1,237 @@
+---
+title: "Interactive graphics in R using plotly and leaflet"
+output: 
+  learnr::tutorial:
+  progressive: true
+allow_skip: true
+df_print: paged
+runtime: shiny_prerendered
+description: >
+  Learn to impress your friends with interactive graphs
+---
+
+```{r setup,include=FALSE}
+library(leaflet)
+library(dplyr)
+library(plotly)
+library(ggplot2)
+library(learnr)
+
+Owls <- data.frame(Latitude=c(51.442916,51.437974,51.439703,51.442799),
+             Longitude=c(-0.942046,-0.936982,-0.940198,-0.940327),
+             Comment=c("1st September","9th September","15th September","18th September"))
+
+Pulse<-readRDS("Pulse.RDS")
+
+```
+  
+  
+## Overview
+
+In this session we will show you how easy it is to make interactive graphics using R. 
+
+First we will show you how to make any graph from `ggplot2` into an interactive graphic, which you can embed in a website or presentation using the `plotly` library. 
+
+Like this:
+
+```{r introp,echo=FALSE,message=FALSE}
+( ggplot(data=Pulse,aes(y=Income,x=Age,col=Gender,Race=Race,Education=Education,PoliticalParty=PoliticalParty))+
+  geom_point()+
+      scale_y_log10()+
+        labs(title="Income by Age and Gender") ) %>%
+          ggplotly()
+
+```
+
+
+
+Then we will show how to make interactive maps using the `leaflet` library. 
+
+Like this:
+
+```{r intromap,echo=FALSE,message=FALSE}
+leaflet(Owls) %>%
+  addCircleMarkers(~Longitude, ~Latitude,popup = ~Comment) %>%
+    addProviderTiles('Esri.WorldImagery') %>%
+      addControl("Owl Sightings on University of Reading Campus: September 2020",position="topright")
+```
+
+## Interactive Plots Using plotly
+
+Let's say we are working with one of the datasets we have used a lot in this course, the `Pulse` survey data. 
+
+And we have made a plot to show the trend of income with age, with different colours for each gender. And we have also fitted a smoothed line to show this trend.
+
+Something like this:
+
+```{r plot1,exercise=TRUE}
+
+ggplot(data=Pulse,aes(y=Income,x=Age,col=Gender))+
+  geom_point()+
+    geom_smooth(se=FALSE)+
+      scale_y_log10()+
+        labs(title="Income by Age and Gender")
+
+```
+
+Quite an interesting graph!
+
+Maybe we want to impress our friends, colleagues and supervisors by using this in a presentation. And we could impress them even more by turning it into an interactive plot, in just two simple steps:
+
+* Store the plot as an object 
+* Use the function `ggplotly()` on that object 
+
+```{r plot2,exercise=TRUE}
+p1<-ggplot(data=Pulse,aes(y=Income,x=Age,col=Gender))+
+  geom_point()+
+    geom_smooth(se=FALSE)+
+      scale_y_log10()+
+        labs(title="Income by Age and Gender")
+
+ggplotly(p1)
+
+```
+
+That's it! Although of course remember to install and load the `plotly` library first. 
+
+
+The key thing to note is that the `+` cannot get you to this point. You have to store the plot as an object and then run the function on that object. 
+Alternatively you can wrap your entire plotting code in brackets and pipe from those brackets into `ggplotly()`
+
+```{r plot3,exercise=TRUE}
+( ggplot(data=Pulse,aes(y=Income,x=Age,col=Gender))+
+  geom_point()+
+    geom_smooth(se=FALSE)+
+      scale_y_log10()+
+        labs(title="Income by Age and Gender") ) %>%
+          ggplotly()
+
+```
+
+Notice that if you hover over any of the points you see a pop up with the underlying data values. And if you hover over any position on the lines, you see the interpolated coordinates. An additional nice feature you can use here is to add in extra aesthetics which will only appear in the pop-up box. So for example if you wanted to also see `Education`, `Race` and `PoliticalParty`
+
+```{r plot4,exercise=TRUE}
+( ggplot(data=Pulse,aes(y=Income,x=Age,col=Gender,Race=Race,Education=Education,PoliticalParty=PoliticalParty))+
+  geom_point()+
+    geom_smooth(se=FALSE)+
+      scale_y_log10()+
+        labs(title="Income by Age and Gender") ) %>%
+          ggplotly()
+
+```
+
+The downside here is that you see the lines disappear. 
+Because it doesn't know how to add the additional columns to the pop up box, what you get is a lot of ugly looking warning messages, and then no line on the final plot. 
+
+So in this case we would have to decide if we want the lines on, or if we want more information from the pop up boxes. Most, but not all, of the things you can customise within `ggplot2` will appear within the interactive plot. Sometimes you will come across certain geometries or custom features that do not get converted.
+
+But mostly this one additional step works well as a really simple way to liven up a graph for a presentation. Experiment for yourself with any of your own plots!
+
+There are also additional options to customise the interactive features of the plot. You can read more about these here:
+https://plotly-r.com/improving-ggplotly.html
+
+## Interactive Maps Using leaflet
+
+Let's say I had spent the month of September on the hunt for sightings of the elusive owls that live on Whiteknights campus. After many sleepless nights I spotted them on four occasions and recorded the coordinates each time. So now I want to make a map of the locations!
+
+You can see the data below, called `Owls`. I have a column for "Latitude", a column for "Longitude" and a column with a "Comment". 
+
+```{r,echo=FALSE}
+DT::datatable(Owls)
+
+```
+
+I could plot the coordinates using `ggplot2`. Bit this would be a pretty limited plot, without the context a map would provide.
+
+However the `leaflet` library makes it easy to produce simple, interactive maps.
+The number of functions, and options within those functions in `leaflet` can be a little but overwhelming. But it is really simple to make a nice map with just a few simple functions, and mostly sticking to the default options.
+
+To start with you need to set up the data with `leaflet()`. This is quite a lot like the initial `ggplot(data=)` step where we load the data, ready for the next stages.
+But by itself, this step just provides a blank canvas.
+
+```{r map0, exercise=TRUE}
+
+leaflet(Owls)
+
+```
+
+As you can see - not much happens!
+
+But we can now think about displaying the data. In this case we have point data that we want to include. A sensible way of plotting points onto a map would be with circles. So we can use a function called `addCircleMarkers()`.
+
+A very important difference to `ggplot2`, is that to add layers within `leaflet` we use the `%>%` pipe and not the `+`.
+
+Within the `addCircleMarkers` function we need to identify the coordinate columns from our data. Longitude first, and then latitude, with both column names preceded by a tilde `~`. And for the later stages of this map to be produced correctly those coordinates must be recorded in decimal degrees. 
+
+So the code looks like this:
+
+
+```{r map1, exercise=TRUE}
+leaflet(Owls) %>%
+  addCircleMarkers(~Longitude, ~Latitude)
+```
+
+Slightly more useful! We can see the position of our points relative to each other now. But this is what we could have done in `ggplot`. So now what we really want is to see them overlayed on top of a map. We can do this by piping into the `addTiles()` function.
+
+```{r map2, exercise=TRUE}
+leaflet(Owls) %>%
+  addCircleMarkers(~Longitude, ~Latitude) %>%
+    addTiles()
+```
+
+As you can see - the default is pretty nice here, using the Open Street Map as a base layer. 
+We have produced a functional, interactive map in just a few lines. 
+As well as the default Open Street Map appearance, `leaflet` makes it easy to bring in base maps from all sorts of third party sources. These are available through the `addProviderTiles()` function, instead of the `addTiles()` function. 
+
+Let's say we want a satellite image instead:
+
+```{r map3,exercise=TRUE}
+leaflet(Owls) %>%
+  addCircleMarkers(~Longitude, ~Latitude) %>%
+    addProviderTiles('Esri.WorldImagery')
+```
+
+You can see all of the available layers you can use here:
+http://leaflet-extras.github.io/leaflet-providers/preview/
+
+Some of these base layers are not open source, so do require registration and authentication to be able to access.
+And other layers can also be used, through installing extension packages.
+
+It might also be useful to provide a bit more information onto the map.
+At the moment if I click on one of my points then nothing happens. But within `addCircleMarkers()` I can add a popup box which shows the content of one of the columns of my data when I click on it. Similar to what we saw with `plotly`.
+So I will add my "Comment" column. Again we need a tilde `~` before the name of the column when working in `leaflet`.
+
+```{r mapagain,exercise=TRUE}
+leaflet(Owls) %>%
+  addCircleMarkers(~Longitude, ~Latitude,popup = ~Comment) %>%
+    addProviderTiles('Esri.WorldImagery')
+```
+
+If you click on any blue circle, now you should see the comment!
+
+Another useful addition may by to put a title onto this map. The function needed to do this does not have such an intuitive name perhaps here. What we are looking for is: `addControl()`
+
+```{r anothermap,exercise=TRUE}
+leaflet(Owls) %>%
+  addCircleMarkers(~Longitude, ~Latitude,popup = ~Comment) %>%
+    addProviderTiles('Esri.WorldImagery') %>%
+      addControl("Owl Sightings on University of Reading Campus: September 2020")
+```
+
+By default this appears in the top left below my zoom controls. I'm not sure I like it there, so instead I will move it to the top right instead.
+
+```{r finalmap,exercise=TRUE}
+leaflet(Owls) %>%
+  addCircleMarkers(~Longitude, ~Latitude,popup = ~Comment) %>%
+    addProviderTiles('Esri.WorldImagery') %>%
+      addControl("Owl Sightings on University of Reading Campus: September 2020",position="topright")
+```
+
+And I think I am now happy with my map! 
+
+But I haven't even begun to scratch the surface of what leaflet can do. You can find a much more comprehensive tutorial for leaflet here, which will cover all sorts of other ways you can present maps and incorporate your own data into these maps:
+https://rstudio.github.io/leaflet/
+
+It is worth noting that `leaflet` is a little different to many R package, since it is a JavaScript package which has been translated into R. And when searching online for `leaflet` you will usually come across people talking about how to write JavaScript code rather than R code. So make sure to include "R" in any search terms when looking for help. 
+
+
