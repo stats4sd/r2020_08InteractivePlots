@@ -215,7 +215,7 @@ leaflet(Owls) %>%
 
 If you click on any blue circle, now you should see the comment!
 
-Another useful addition may by to put a title onto this map. The function needed to do this does not have such an intuitive name perhaps here. What we are looking for is: `addControl()`
+Another useful addition may by to put a title onto this map. The function for this doesn't really have an intuitive name: `addControl()`
 
 ```{r anothermap,exercise=TRUE}
 leaflet(Owls) %>%
@@ -224,7 +224,7 @@ leaflet(Owls) %>%
       addControl("Owl Sightings on University of Reading Campus: September 2020")
 ```
 
-By default this appears in the top left below my zoom controls. I'm not sure I like it there, so instead I will move it to the top right instead.
+By default this appears in the top left below the zoom controls. I'm not sure I like it there, so instead I will move it to the top right instead.
 
 ```{r finalmap,exercise=TRUE}
 leaflet(Owls) %>%
