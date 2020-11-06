@@ -19,7 +19,7 @@ library(learnr)
 
 Owls <- data.frame(Latitude=c(51.442916,51.437974,51.439703,51.442799),
              Longitude=c(-0.942046,-0.936982,-0.940198,-0.940327),
-             Comment=c("1st September","9th September","15th September","18th September"))
+             Comment=c("Tawny; 1st September: 04:12","Tawny; 9th September 23:44","Tawny; 15th September 22:10","Tawny; 18th September 01:39"))
 
 Pulse<-readRDS("Pulse.RDS")
 
@@ -108,7 +108,12 @@ Alternatively you can wrap your entire plotting code in brackets and pipe from t
 
 ```
 
-Notice that if you hover over any of the points you see a pop up with the underlying data values. And if you hover over any position on the lines, you see the interpolated coordinates. An additional nice feature you can use here is to add in extra aesthetics which will only appear in the pop-up box. So for example if you wanted to also see `Education`, `Race` and `PoliticalParty`
+Notice that if you hover over any of the points you see a pop up with the underlying data values. And if you hover over any position on the lines, you see the interpolated coordinates. 
+
+
+An additional nice feature you can use here is to add in extra aesthetics which will only appear in the pop-up box. So for example if you wanted to also see `Education`, `Race` and `PoliticalParty`.
+
+(Warning in advance - the code below will produce a lot of warning messages! You will need to scroll down to continue.)
 
 ```{r plot4,exercise=TRUE}
 ( ggplot(data=Pulse,aes(y=Income,x=Age,col=Gender,Race=Race,Education=Education,PoliticalParty=PoliticalParty))+
@@ -120,12 +125,13 @@ Notice that if you hover over any of the points you see a pop up with the underl
 
 ```
 
-The downside here is that you see the lines disappear. 
-Because it doesn't know how to add the additional columns to the pop up box, what you get is a lot of ugly looking warning messages, and then no line on the final plot. 
+Because it doesn't know how to add the additional columns to the pop up box, what you get is a lot of warning messages, and then no lines included on the final plot. But otherwise this has worked quite well for displaying the points with lots of additional data included in the pop up box.
 
-So in this case we would have to decide if we want the lines on, or if we want more information from the pop up boxes. Most, but not all, of the things you can customise within `ggplot2` will appear within the interactive plot. Sometimes you will come across certain geometries or custom features that do not get converted.
+You will find issues like this occasionally when working with `plotly`. Most, but not all, of the things you can customise within `ggplot2` will appear within the interactive plot but sometimes you will come across certain geometries or custom features that do not get converted. And in those cases you tend to get a lot of warning messages, but also an output plot which may be missing some features. 
 
-But mostly this one additional step works well as a really simple way to liven up a graph for a presentation. Experiment for yourself with any of your own plots!
+So in this case we would have to decide if we want the lines on, or if we want more information from the pop up boxes. 
+
+But, generally, this one additional step works well as a really simple way to liven up a graph for a presentation. Experiment for yourself with any of your own plots!
 
 There are also additional options to customise the interactive features of the plot. You can read more about these here:
 https://plotly-r.com/improving-ggplotly.html
