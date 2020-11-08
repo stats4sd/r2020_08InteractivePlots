@@ -56,6 +56,16 @@ leaflet(Owls) %>%
       addControl("Owl Sightings on University of Reading Campus: September 2020",position="topright")
 ```
 
+Before getting started - we should make sure we install and load the `plotly` and `leaflet` libraries ready for this module, as well as `ggplot2` which you should already have installed, but will still need to be loaded.
+
+```
+library(leaflet)
+library(plotly)
+library(ggplot2)
+```
+
+
+
 ## Interactive Plots Using plotly
 
 Let's say we are working with one of the datasets we have used a lot in this course, the `Pulse` survey data. 
@@ -133,8 +143,9 @@ So in this case we would have to decide if we want the lines on, or if we want m
 
 But, generally, this one additional step works well as a really simple way to liven up a graph for a presentation. Experiment for yourself with any of your own plots!
 
-There are also additional options to customise the interactive features of the plot. You can read more about these here:
-https://plotly-r.com/improving-ggplotly.html
+There are also additional options to customise the interactive features of the plot. You can read more about these <a href="https://plotly-r.com/improving-ggplotly.html" target="_blank">here  </a>  
+
+
 
 ## Interactive Maps Using leaflet
 
@@ -147,7 +158,7 @@ DT::datatable(Owls)
 
 ```
 
-I could plot the coordinates using `ggplot2`. Bit this would be a pretty limited plot, without the context a map would provide.
+I could plot the coordinates using `ggplot2`. But this would be a pretty limited plot, without the context a map would provide.
 
 However the `leaflet` library makes it easy to produce simple, interactive maps.
 The number of functions, and options within those functions in `leaflet` can be a little but overwhelming. But it is really simple to make a nice map with just a few simple functions, and mostly sticking to the default options.
@@ -197,11 +208,12 @@ leaflet(Owls) %>%
     addProviderTiles('Esri.WorldImagery')
 ```
 
-You can see all of the available layers you can use here:
-http://leaflet-extras.github.io/leaflet-providers/preview/
+You can see all of the available layers you can use <a href="http://leaflet-extras.github.io/leaflet-providers/preview/" target="_blank">here  </a>  
 
-Some of these base layers are not open source, so do require registration and authentication to be able to access.
-And other layers can also be used, through installing extension packages.
+The scrolling menu on the right hand side of the page shows a preview for these base layers, and just using the short name you can see within that menu within `addProviderTiles()` will let you use this within `leaflet`.
+
+Some of these base layers are not open source, so do require registration and authentication to be able to access, but there are many which can be freely used providing they are appropriately referenced. You will see the references automatically are embedded into the plots, so you don't really even need to think about that step!
+
 
 It might also be useful to provide a bit more information onto the map.
 At the moment if I click on one of my points then nothing happens. But within `addCircleMarkers()` I can add a popup box which shows the content of one of the columns of my data when I click on it. Similar to what we saw with `plotly`.
@@ -215,7 +227,7 @@ leaflet(Owls) %>%
 
 If you click on any blue circle, now you should see the comment!
 
-Another useful addition may by to put a title onto this map. The function for this doesn't really have an intuitive name: `addControl()`
+Another useful addition may be to put a title onto this map. The function for this doesn't really have an intuitive name: `addControl()`
 
 ```{r anothermap,exercise=TRUE}
 leaflet(Owls) %>%
@@ -236,8 +248,8 @@ leaflet(Owls) %>%
 And I think I am now happy with my map! 
 
 But I haven't even begun to scratch the surface of what leaflet can do. You can find a much more comprehensive tutorial for leaflet here, which will cover all sorts of other ways you can present maps and incorporate your own data into these maps:
-https://rstudio.github.io/leaflet/
+<a href="https://rstudio.github.io/leaflet/" target="_blank">https://rstudio.github.io/leaflet/  </a>  
 
-It is worth noting that `leaflet` is a little different to many R package, since it is a JavaScript package which has been translated into R. And when searching online for `leaflet` you will usually come across people talking about how to write JavaScript code rather than R code. So make sure to include "R" in any search terms when looking for help. 
+It is worth noting that `leaflet` is a little different to many R packages, since it is a JavaScript package which has been translated into R. And when searching online for `leaflet` you will usually come across people talking about how to write JavaScript code rather than R code. So make sure to include "R" in any search terms when looking for help. 
 
 
